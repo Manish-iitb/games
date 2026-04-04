@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 { margin-bottom: 1.5rem; letter-spacing: 2px; }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .score-box {
+            background: rgba(0,0,0,0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            min-width: 100px;
+        }
+
+        #score-val { color: var(--accent); font-size: 2rem; display: block; }
+
+        .display-area {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .choice-btn {
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .choice-btn:hover {
+            transform: scale(1.1);
+            background: var(--light);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.9);
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 1.2em;
+        }
+
+        .win { color: var(--success); }
+        .lose { color: var(--danger); }
+        .draw { color: #f1c40f; }
+
+        button#reset {
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        button#reset:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>R-P-S</h1>
+
+        <div class="scoreboard">
+            <div class="score-box">
+                PLAYER
+                <span id="player-score">0</span>
+            </div>
+            <div class="score-box">
+                COMPUTER
+                <span id="computer-score">0</span>
+            </div>
+        </div>
+
+        <div class="display-area">
+            <div id="result-display">Choose your weapon!</div>
+        </div>
+
+        <div class="choices">
+            <button class="choice-btn" onclick="play('rock')">✊</button>
+            <button class="choice-btn" onclick="play('paper')">✋</button>
+            <button class="choice-btn" onclick="play('scissors')">✌️</button>
+        </div>
+
+        <div id="message"></div>
+
+        <button id="reset" onclick="resetGame()">Reset Scores</button>
+    </div>
+
+    <script>
+        let playerScore = 0;
+        let computerScore = 0;
+
+        const resultDisplay = document.getElementById('result-display');
+        const messageDisplay = document.getElementById('message');
+        const pScoreSpan = document.getElementById('player-score');
+        const cScoreSpan = document.getElementById('computer-score');
+
+        const emojis = {
+            rock: '✊',
+            paper: '✋',
+            scissors: '✌️'
+        };
+
+        function play(playerChoice) {
+            const choices = ['rock', 'paper', 'scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+            
+            // Logic for winner
+            let result = "";
+            
+            if (playerChoice === computerChoice) {
+                result = "draw";
+            } else if (
+                (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                (playerChoice === 'paper' && computerChoice === 'rock') ||
+                (playerChoice === 'scissors' && computerChoice === 'paper')
+            ) {
+                result = "win";
+                playerScore++;
+            } else {
+                result = "lose";
+                computerScore++;
+            }
+
+            updateUI(playerChoice, computerChoice, result);
+        }
+
+        function updateUI(player, computer, result) {
+            // Display icons
+            resultDisplay.innerHTML = `${emojis[player]} vs ${emojis[computer]}`;
+            
+            // Update Text
+            if (result === "win") {
+                messageDisplay.innerText = "YOU WIN!";
+                messageDisplay.className = "win";
+            } else if (result === "lose") {
+                messageDisplay.innerText = "COMPUTER WINS!";
+                messageDisplay.className = "lose";
+            } else {
+                messageDisplay.innerText = "IT'S A DRAW!";
+                messageDisplay.className = "draw";
+            }
+
+            // Update Scores
+            pScoreSpan.innerText = playerScore;
+            cScoreSpan.innerText = computerScore;
+        }
+
+        function resetGame() {
+            playerScore = 0;
+            computerScore = 0;
+            pScoreSpan.innerText = "0";
+            cScoreSpan.innerText = "0";
+            resultDisplay.innerText = "Choose your weapon!";
+            messageDisplay.innerText = "";
+        }
+    </script>
+</body>
+</html>
